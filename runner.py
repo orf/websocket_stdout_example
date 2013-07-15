@@ -17,6 +17,10 @@ DEBUG = True
 
 
 class ProcessProtocol(protocol.ProcessProtocol):
+    """ I handle a child process launched via reactor.spawnProcess.
+    I just buffer the output into a list and call WebSocketProcessOutputterThingFactory.broadcast when
+    any new output is read
+    """
     def __init__(self, websocket_factory):
         self.ws = websocket_factory
         self.buffer = []
@@ -32,6 +36,9 @@ class ProcessProtocol(protocol.ProcessProtocol):
 
 # http://autobahn.ws/python
 class WebSocketProcessOutputterThing(WebSocketServerProtocol):
+    """ I handle a single connected client. We don't need to do much here, simply call the register and un-register
+    functions when needed.
+    """
     def onOpen(self):
         self.factory.register(self)
         for line in self.factory.process.buffer:
@@ -44,6 +51,8 @@ class WebSocketProcessOutputterThing(WebSocketServerProtocol):
 
 
 class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
+    """ I maintain a list of connected clients and provide a method for pushing a single message to all of them.
+    """
     protocol = WebSocketProcessOutputterThing
         
     def __init__(self, *args, **kwargs):
