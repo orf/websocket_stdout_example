@@ -2,7 +2,7 @@ from twisted.internet import reactor, protocol
 from autobahn.websocket import WebSocketServerFactory, \
                                WebSocketServerProtocol, \
                                listenWS
-from twisted.python.log import startLogging
+from twisted.python.log import startLogging, msg
 import sys
 startLogging(sys.stdout)
 
@@ -18,8 +18,6 @@ class ProcessProtocol(protocol.ProcessProtocol):
         self.buffer = []
         
     def outReceived(self, message):
-        if DEBUG:
-            print "Got message %s" % message
         self.ws.broadcast(message)
         self.buffer.append(message)
         self.buffer = self.buffer[-10:] # Last 10 messages please
@@ -49,10 +47,12 @@ class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
         reactor.spawnProcess(self.process,COMMAND_NAME, COMMAND_ARGS, {})
 
     def register(self, client):
+        msg("Registered client %s" % client)
         if not client in self.clients:
             self.clients.append(client)
 
     def unregister(self, client):
+        msg("Unregistered client %s" % client)
         if client in self.clients:
             self.clients.remove(client)
 
