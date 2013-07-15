@@ -51,7 +51,7 @@ class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
         #super(WebSocketProcessOutputterThingFactory, self).__init__(self, *args, **kwargs)
         self.clients = []
         self.process = ProcessProtocol(self)
-        reactor.spawnProcess(self.process,COMMAND_NAME, COMMAND_ARGS, {})
+        reactor.spawnProcess(self.process,COMMAND_NAME, COMMAND_ARGS, {}, usePTY=True)
 
     def register(self, client):
         msg("Registered client %s" % client)
