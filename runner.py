@@ -6,6 +6,10 @@ from twisted.python.log import startLogging, msg
 import sys
 startLogging(sys.stdout)
 
+# Examples:
+# runner.py /bin/sh -c "tail -f /var/log/nginx/access.log | grep -v secret_admin_page" --line-buffered | awk '{$1=""; print}'
+# runner.py tail tail -F /var/log/nginx/access.log
+
 COMMAND_NAME = sys.argv[1]
 COMMAND_ARGS = sys.argv[1:]
 LOCAL_ONLY = False
