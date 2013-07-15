@@ -8,6 +8,7 @@ startLogging(sys.stdout)
 
 COMMAND_NAME = sys.argv[1]
 COMMAND_ARGS = sys.argv[1:]
+LOCAL_ONLY = False
 
 
 class ProcessProtocol(protocol.ProcessProtocol):
@@ -59,6 +60,7 @@ class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
 
 
 if __name__ == "__main__":
-    factory = WebSocketProcessOutputterThingFactory("ws://localhost:9000", debug=False)
+    print "Running process %s with args %s" % (COMMAND_NAME, COMMAND_ARGS)
+    factory = WebSocketProcessOutputterThingFactory("ws://%s:9000" % ("localhost" if LOCAL_ONLY else "0.0.0.0"), debug=False)
     listenWS(factory)
     reactor.run()
