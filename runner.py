@@ -9,6 +9,7 @@ startLogging(sys.stdout)
 COMMAND_NAME = sys.argv[1]
 COMMAND_ARGS = sys.argv[1:]
 LOCAL_ONLY = False
+DEBUG = True
 
 
 class ProcessProtocol(protocol.ProcessProtocol):
@@ -17,6 +18,8 @@ class ProcessProtocol(protocol.ProcessProtocol):
         self.buffer = []
         
     def outReceived(self, message):
+        if DEBUG:
+            print "Got message %s" % message
         self.ws.broadcast(message)
         self.buffer.append(message)
         self.buffer = self.buffer[-10:] # Last 10 messages please
@@ -26,7 +29,6 @@ class ProcessProtocol(protocol.ProcessProtocol):
 class WebSocketProcessOutputterThing(WebSocketServerProtocol):
     def onOpen(self):
         self.factory.register(self)
-
         for line in self.factory.process.buffer:
             self.sendMessage(line)
 
